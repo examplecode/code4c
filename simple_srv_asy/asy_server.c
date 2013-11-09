@@ -19,6 +19,20 @@
 #define PORT    5555
 #define MAXMSG  512
 
+typedef struct client_req
+{
+  /* data */
+  int c_sock ; /*  represent the client socket  */
+  int c_w_enc ; /* specifyed client socket write encrypted data  to target */
+  int c_r_enc ; /* specifyed client sockect read encrypted data from target */
+  
+  int a_sock;  /* represent the accpect socket */
+  int a_r_enc; /* specifyed accept socket read encrypted data */
+  int a_w_enc; /* specifyed accept socket write encrypted data */
+
+  // char[]
+};
+
 int
 make_socket (uint16_t port)
 {
@@ -50,8 +64,10 @@ int
 read_from_client (int filedes)
 {
   char buffer[MAXMSG];
+
   int nbytes;
 
+  memset(&buffer,0,sizeof(buffer));
   nbytes = read (filedes, buffer, MAXMSG);
   if (nbytes < 0)
     {
@@ -65,9 +81,24 @@ read_from_client (int filedes)
   else
     {
       /* Data read. */
-      fprintf (stderr, "Server: got message: `%s'\n", buffer);
+      fprintf (stderr, "Server: got message: %s\n", buffer);
       return 0;
     }
+}
+
+int write_to_client(int filedes)
+{
+  char buffer[] = { "hello\0"};
+  if(write(filedes,buffer,sizeof(buffer)) < 0 ) 
+  {
+     perror ("send to client error");
+  }
+}
+
+
+int read_from_remote()
+{
+
 }
 
 int
@@ -113,6 +144,7 @@ main (void)
         }
 
 
+
       /* Service all the sockets with input pending. */
       for (i = 0; i < FD_SETSIZE; ++i)
         if (FD_ISSET (i, &read_fd_set))
@@ -144,10 +176,13 @@ main (void)
                 /* Data arriving on an already-connected socket. */
                 if (read_from_client (i) < 0)
                   {
+
                     close (i);
                     FD_CLR (i, &active_fd_set);
                   }
               }
+
+              write_to_client(i);
           }
     }
 }
