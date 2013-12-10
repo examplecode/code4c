@@ -42,34 +42,62 @@ init_sockaddr (struct sockaddr_in *name,
   name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
 }
 
-
-int
-main (void)
+int make_client_sock(const char * server_name,int port)
 {
-
   int sock;
   struct sockaddr_in servername;
 
   /* Create the socket. */
   sock = socket (PF_INET, SOCK_STREAM, 0);
   if (sock < 0)
-    {
-      perror ("socket (client)");
-      exit (EXIT_FAILURE);
-    }
+  {
+    perror ("socket (client)");
+    exit (EXIT_FAILURE);
+  }
 
   /* Connect to the server. */
   init_sockaddr (&servername, SERVERHOST, PORT);
-  if (0 > connect (sock,
-                   (struct sockaddr *) &servername,
-                   sizeof (servername)))
-    {
-      perror ("connect (client)");
-      exit (EXIT_FAILURE);
-    }
 
-  /* Send data to the server. */
-  write_to_server (sock);
-  close (sock);
-  exit (EXIT_SUCCESS);
+
+  if (0 > connect (sock,
+        (struct sockaddr *) &servername,
+        sizeof (servername)))
+  {
+    return -1;
+  }
+  return sock;
+}
+
+int
+main (void)
+{
+  int sock = make_client_sock("localhost",8000);
+  if(sock < 0)
+  {
+    perror("create new client error ");
+  }
+
+
+  //  int sock;
+  // struct sockaddr_in servername;
+
+  // /* Create the socket. */
+  // sock = socket (PF_INET, SOCK_STREAM, 0);
+  // if (sock < 0)
+  //   {
+  //     perror ("socket (client)");
+  //     exit (EXIT_FAILURE);
+  //   }
+
+  // /* Connect to the server. */
+  // init_sockaddr (&servername, SERVERHOST, PORT);
+  // if (0 > connect (sock,
+  //                  (struct sockaddr *) &servername,
+  //                  sizeof (servername)))
+  //   {
+  //     perror ("connect (client)");
+  //     exit (EXIT_FAILURE);
+  //   }
+  write_to_server(sock);
+
 }
