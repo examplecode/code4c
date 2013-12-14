@@ -39,49 +39,39 @@ typedef struct _student
 	int
 main ( int argc, char *argv[] )
 {
-	student * stu1 = (student*) malloc(sizeof(student));
-	student * stu2 = (student*) malloc(sizeof(student));
-	student * stu3 = (student*) malloc(sizeof(student));
-
-	bzero(stu1,sizeof(student));
-	bzero(stu2,sizeof(student));
-	bzero(stu3,sizeof(student));
-
-	strcpy(stu1->name,"stu1");
-	stu1->age = 21;
-
-	strcpy(stu1->name,"stu2");
-	stu2->age = 22;
-
-	strcpy(stu1->name,"stu3");
-	stu3->age = 23;
-
-
-
 	vector * vec = (vector *) malloc(sizeof(vector));
 	vector_init(vec);
 
-	vector_add(vec,stu1);
-	vector_add(vec,stu2);
-	vector_add(vec,stu3);
+	int i;
+	for(i = 0 ; i < 100 ; i++ )
+	{
+		student * stu = (student*) malloc(sizeof(student));
 
-	assert(vector_count(vec) == 3);
+		sprintf(stu->name,"Stu %d",i);
+		vector_add(vec,stu);
+	}
 
-	student * stu = (student *) vector_get(vec,1);
-
-	assert(stu->age ==  22);
-
-
-	printf(">>stu age: %d\n",stu->age);
 
 	vector_delete(vec,2);
-	assert(vector_count(vec) == 2);
-	
 
-	free(stu1);
-	free(stu2);
-	free(stu3);
+	vector_delete(vec,30);
 
+	int count = vector_count(vec);
+	for(i= 0; i< count; i ++) 
+	{
+		student * stu = vector_get(vec,i);
+
+		printf("Stu:%s\n",stu->name);
+	}
+
+
+	for(i= 0; i< vector_count(vec); i ++) 
+	{
+		student * stu = vector_get(vec,i);
+		printf("Stu:%s\n",stu->name);
+		vector_delete(vec,i);
+		free(stu);
+	}
 
 	return EXIT_SUCCESS;
 }				/* ----------  end of function main  ---------- */

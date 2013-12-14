@@ -54,7 +54,7 @@ sigreap(int sig)
 }
 
 void
-set_nonblock(int fd)
+x`(int fd)
 {
     int fl;
     int x;
